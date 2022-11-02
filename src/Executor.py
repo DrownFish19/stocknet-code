@@ -143,7 +143,7 @@ class Executor:
                 train_batch_loss_list = list()
                 epoch_size, epoch_n_acc = 0.0, 0.0
 
-                train_batch_gen = self.pipe.batch_gen(phase='train')  # a new gen for a new epoch
+                train_batch_gen = self.pipe.batch_gen_pre(phase='train')  # a new gen for a new epoch
 
                 for train_batch_dict in train_batch_gen:
 
@@ -177,8 +177,8 @@ class Executor:
                         stat_logger.print_batch_stat(n_iter, train_batch_loss, train_batch_n_acc,
                                                      train_batch_dict['batch_size'])
                         self.saver.save(sess, self.model.tf_saver_path, n_iter)
-                        res = self.generation(sess, phase='dev')
-                        stat_logger.print_eval_res(res)
+                        # res = self.generation(sess, phase='dev')
+                        # stat_logger.print_eval_res(res)
 
                 # print training epoch stat
                 epoch_loss, epoch_acc = metrics.basic_train_stat(train_batch_loss_list, epoch_n_acc, epoch_size)

@@ -27,8 +27,10 @@ class PathParser:
         self.movement = os.path.join(self.data, config_path['price'])
         self.vocab = os.path.join(self.res, config_path['vocab_tweet'])
 
-config_fp = os.path.join(os.path.dirname(__file__), 'config.yml')
-config = yaml.load(file(config_fp, 'r'))
+config_fp = os.path.join(os.path.dirname(__file__), 'config_1657.yml')
+with open(config_fp, 'r') as stream:
+    config = yaml.safe_load(stream)
+
 config_model = config['model']
 
 dates = config['dates']

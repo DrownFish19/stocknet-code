@@ -1,0 +1,147 @@
+---
+model:
+  mode: 'all'
+  variant_type: 'hedge' # hedge, tech, fund, discriminative
+  alpha: 0.5 # 0.1, 0.3, 0.5, 0.7, 0.9, 1.0
+  dropout_vmd_in: 0.3
+  dropout_mel_in: 0.3
+  n_epochs: 15
+  batch_size: 32
+
+  kl_lambda_anneal_rate: 0.005  # 0.005, 0.002, 0.001, 0.0005
+  kl_lambda_start_step: 0
+  daily_att: 'y'  # y, g
+
+  vmd_rec: 'zh'  # zh or h
+
+  opt: 'adam'  # sgd, adam
+  lr: 0.001
+  clip: 15.0
+
+  y_size: 2
+  use_constant_kl_lambda: 0
+  constant_kl_lambda: 0.1
+
+  word_embed_type: 'glove'
+  weight_init: 'xavier-uniform'
+  mel_cell_type: 'gru'  # basic, gru, ln-lstm
+  vmd_cell_type: 'gru'  # basic, gru, ln-lstm
+
+  word_embed_size: 50
+  stock_embed_size: 150
+  init_stock_with_word: 0
+  mel_h_size: 100
+  h_size: 150
+  g_size: 50
+
+  shuffle: 1
+  max_n_days: 5
+  max_n_msgs: 30
+  max_n_words: 40
+
+  decay_step: 100
+  decay_rate: 0.96
+  momentum: 0.9
+
+  use_in_bn: 0
+  use_o_bn: 0
+  use_g_bn: 0
+  dropout_mel: 0.0
+  dropout_ce: 0.0
+  dropout_vmd: 0.0
+
+dates:
+  train_start_date: '2015-01-01'
+  train_end_date: '2018-01-01'
+  dev_start_date: '2018-01-01'
+  dev_end_date: '2019-01-01'
+  test_start_date: '2019-01-01'
+  test_end_date: '2020-01-01'
+
+stocks:
+  Other: [ 'ABGOY','AELTF','AIQ','AJISF','ANAC','AVHI','AWAY','BITRF','CBFC','CGO','CHI','CHSYF','CHW','CHY','CLRI','CMOXF','CNBZ','CSQ','CYIO','DFEL','DMFG','DRIV','DSPG','EAC','EDF','EDI','EFLVF',
+           'ENBP','ENTR','ESCR','ESXB','ETOLF','FAM','FCMGF','FCT','FEI','FFA','FIF','FMY','FSD','FSFF','GBLX','GCRIF','GLBD','GNCNF','GNSG','GRSFF','GULTU','HERO','HNRDF','IHD','ISLE','ITSXF',
+           'IUSPF','IUTCF','IUTSF','JPM-PC','JSD','JTD','LE','LION','MCFUF','MCOA','MITK','MOG-A','NCLIP','NOXL','ONEQ','PAOTF','PLPL','PREC','PYS','QIFTF','RHDGF','RWMI','SDAD','SENEB','SGBI',
+           'SHERF','SIBE','SPXX','TEI','TPIL','TRUE','VLNSF','WNDLF','WWSG','XLNX' ]
+  Aerospace: [ 'ASTC','ATRO','AVAV','ESLT','ISSC','KLXI','KTOS','RADA','TATT' ]
+  Auto-Tires-Trucks: [ 'CAAS','CVGI','DORM','FOXF','GNTX','GT','LKQ','MPAA','PCAR','PRTS','PSIX','SEV','SNSGF' ]
+  Basic-Materials: [ 'AMRS','ANDE','BCPC','CENX','CHNR','CXDC','FSTR','GOLD','GPRE','GURE','HAYN','HIHO','HWKN','IOSP','KALU','LAWS','MBII','MEOH','MERC','NNBR','NTIC','NWPX','OFLX','PAAS','PPG',
+                     'RGLD','RYI','SCHN','SHLM','SLVM','STLD','SYNL','TORM','TRS','UFS','USAP','WSCI','ZEUS' ]
+  Business-Services: [ 'ACTG','ADP','ADTN','ALLT','ARIS','BBSI','BCOR','CAR','CCRN','CDTI','CIDM','CNET','COHR','CPRT','CRAI','CREG','CRTN','DLHC','ECOL','EVOL','EXLS','EXPO','FISV','GNCMA','HCKT',
+                       'HCSG','HMHC','HSII','HSON','HURN','ICFI','III','INTX','IPDN','ISIG','JTPY','KELYA','KFRC','LQDT','LUNA','MA','MARA','MIND','MLHR','MLNK','MMS','MORN','MRVL','NCMI','NRCIB',
+                       'PAYX','PCOM','PFMT','PFSW','QRHC','RCMT','RRD','SCOR','SGRP','SIXD','SMRT','SPSC','SRCL','STRN','STX','TEDU','TTEC','V','VRSK','WLKR' ]
+  Computers-and-Technology: [ 'AAOI','AAPL','ACFN','ACIW','ACLS','ACTA','ADBE','ADI','ADSK','AEHR','AEIS','AEY','AGYS','AKAM','ALOG','AMAT','AMBA','AMD','AMKR','AMOT','AMSC','AMSWA','AMX','ANGI',
+                              'ANY','AOSL','ARCW','ASML','ASUR','ASYS','AUDC','AVID','AVNW','AWRE','AXTI','AZPN','BBOX','BCOV','BELFB','BIDU','BLDP','BLIN','BLKB','BNFT','BNSO','BOSC','BRKR','BRKS',
+                              'BSQR','CALD','CALL','CAMP','CAMT','CASS','CAVM','CCIH','CCMP','CDK','CDNS','CDW','CEVA','CGNX','CHKP','CLFD','CLRO','CMTL','CNXR','COHU','COMM','CRNT','CRTO','CRUS',
+                              'CSCO','CSGP','CSGS','CSPI','CTG','CTSH','CTXS','CUTR','CVLT','CYBE','CYBR','CYRN','DAIO','DAKT','DGII','DIOD','DOX','DSGX','DSWL','DWCH','DYSL','EBIX','EDGW','EGAN',
+                              'EGHT','ELON','ELTK','EMKR','ENTG','EPAM','EPAY','ESIO','EVLV','EXTR','FALC','FARO','FB','FEIM','FFIV','FIVN','FORM','FORR','FORTY','FRSH','FTNT','GEOS','GIGM','GILT',
+                              'GRMN','GSIG','GSIT','HBIO','HDP','HEAR','HIMX','HLIT','HOLI','HSTM','ICLD','IDCC','IGLD','IGOI','IIN','IMMR','IMOS','INFA','INFN','INOD','INTC','INTU','INVE','INVT',
+                              'IPAS','IPGP','IRBT','IRDM','IRIX','ITI','ITRI','IVAC','JCS','JKHY','JRJC','KE','KEQU','KEYW','KLIC','KOPN','KTCC','KVHI','LEDS','LFUS','LLNW','LMDCF','LOGI','LORL',
+                              'LPSN','LPTH','LRCX','LSCC','LTRPA','LTRX','LVWD','MANH','MANT','MATR','MCHP','MCHX','MGIC','MICT','MITL','MKSI','MMYT','MNDO','MOBL','MOMO','MOSY','MPWR','MRCY','MSCC',
+                              'MSFT','MSTR','MTLS','MU','MVIS','NATI','NCTY','NEON','NICE','NLST','NSYS','NTAP','NTCT','NTES','NTGR','NTWK','NUAN','NVDA','NVEC','NVMI','NXPI','OCC','OCLR','OIIM',
+                              'OLED','OMRNY','ON','OSIS','OTEX','PCTY','PCYG','PDFS','PEGA','PERI','PHI','PLAB','PLPC','PLUS','PLXS','POWI','PRFT','PRGS','PRKR','PRSS','PTC','PTNR','PXLW','QADA',
+                              'QBAK','QCOM','QLYS','QNST','QRVO','QUIK','QUMU','RBCN','RDCM','RDWR','REFR','RELL','RESN','RFIL','RMBS','RMGN','RNWK','RSYS','S','SABR','SANM','SATS','SEAC','SGMA',
+                              'SGMS','SGOC','SIFY','SILC','SIMO','SLAB','SLP','SMCI','SMSI','SMTC','SNCR','SNPS','SOFO','SOHU','SPDC','SPIL','SPLK','SPNS','SREV','SSNC','SSYS','STEM','SURG','SWIR',
+                              'SWKS','SYNA','SYNT','SYPR','TACT','TCCO','TCX','TESS','TOUR','TRNS','TSEM','TSRI','TTGT','TTMI','TWER','TWOU','TXN','TYL','UCTT','UEIC','ULBI','UPLD','UTSI','VECO',
+                              'VICR','VIDE','VIEWF','VNET','VOD','VOXX','VRNS','VRNT','VRSN','VSAT','WB','WDC','WEB','WHLM','WIX','WSTL','WWD','XCRA','XNET','XPLR','YNDX','YY','ZIXI' ]
+  Conglomerates: [ 'IAC','IEP','NILE','RAVN' ]
+  Construction: [ 'AAON','CCF','CHCI','CSTE','CVCO','EFOI','GLDD','HOV','LYTS','MCCK','PATK','PCH','PRIM','ROCK','TGEN','UFPI','USLM' ]
+  Consumer-Discretionary: [ 'ABCD','AMCX','AMWD','APEI','ATVI','BBGI','BSET','BV','CENT','CHDN','CHTR','CMCSA','CMLS','CMPR','CNTY','CPHC','CPICQ','CPLA','CRWS','CTHR','CZR','DISCA','DISH','DXYN',
+                            'EA','EMMS','ESCA','FLL','FLXS','GAIA','GAME','GPRO','HAS','HMTV','HOFT','HTHT','JAKK','JOUT','KBAL','KNDI','KOSS','LBRDA','LBTYA','LCUT','LINC','LOPE','LTRE','MAR',
+                            'MAT','MBUU','MCRI','MNRO','NAUH','NCLH','NFLX','NVFY','NWSA','PENN','PFIN','POOL','PSO','RDI','RICK','RLJE','SBGI','SIRI','SKYAY','SODA','SP','STRA','SUMR','TILE','WYNN',
+                            'ZNGA' ]
+  Consumer-Staples: [ 'ALCO','BRFH','BRID','CDZI','CHEF','CHSCP','COCO','COLM','CROX','CVGW','DJCO','EDSFF','EDUC','FIZZ','FORD','FREE','FRPT','HAIN','HELE','IPAR','JBSS','JJSF','JOBS','JVA','LANC',
+                      'LMNR','LULU','LWAY','MATW','MDLZ','MGPI','MNST','OBCI','PERY','PPC','RCKY','RELV','RIBT','SAFM','SANW','SCHL','SEED','SGC','SHOO','SNMX','STKL','SWSH','UNFI','WEYS','WVVI' ]
+  Finance: [ 'AAME','ABCB','ACFC','ACGL','ACNB','AFCB','AFSI','AINV','AMBC','AMNB','ANAT','ANCB','ANCX','ARCC','AROW','ASPS','ASRV','ATAX','ATLC','ATLO','AUBN','BANF','BANR','BANX','BCBP','BCMXY',
+             'BCS','BFIN','BGCP','BKCC','BMRC','BMTC','BOKF','BOTJ','BPOP','BRKL','BSF','BSRR','BUR','BUSE','BWFG','BYBK','BYFC','CAC','CACC','CARV','CASH','CATY','CBAN','CBFV','CBNK','CBOE','CBSH',
+             'CCBG','CCNE','CCUR','CFBK','CFFI','CFFN','CFNB','CG','CHCO','CHFN','CHMG','CINF','CIZN','CMCT','CME','CNBKA','CNOB','COBZ','COLB','CONE','CPSS','CS','CSBK','CSWC','CTBI','CTRE','CUBA',
+             'CVCY','CVLY','CWAY','CWBC','CZNC','CZWI','DCOM','DGICA','DHIL','EBMT','EBSB','EBTC','ECPG','EEFT','EFSC','EGBN','EHTH','EMCF','EMF','EMITF','EQIX','ERIE','ESBK','ESGR','ESSA','EWBC',
+             'EZPW','FBIZ','FBMS','FBP','FCAP','FCBC','FCCO','FCCY','FCNCA','FDUS','FFBC','FFIC','FFIN','FFKT','FFNM','FFNW','FFWM','FIBK','FISI','FITB','FLIC','FMBI','FMNB','FNHC','FNLC','FRBA',
+             'FRBK','FRME','FRPH','FSBW','FSFG','FULT','FUNC','FUND','GABC','GAIN','GBCI','GBDC','GBLI','GBNK','GCBC','GFED','GGAL','GLAD','GLBZ','GLPI','GNBC','GOOD','GRBK','GROW','GSBC','GWGH',
+             'HAFC','HALL','HAWK','HBAN','HBCP','HBMD','HBNC','HFBL','HFWA','HGSH','HIFS','HMNF','HMST','HNNA','HRZN','HTBI','HTBK','HTLF','HWBK','IBCP','IBKR','IBOC','IBTX','INBK','INDB','INTG',
+             'IPCC','IROQ','ISBC','ISTR','ITIC','JRVR','JXSB','KCLI','KFFB','KINS','KRNY','LAMR','LAND','LARK','LBAI','LGIH','LKFN','LMRK','LOAN','LPLA','LSBK','MAYS','MBCN','MBWM','MCBC','MCBK',
+             'MET','MGI','MGRC','MGYR','MHLD','MKTX','MLVF','MMU','MOFG','MPB','MRCC','MRLN','MSFG','NBN','NBTB','NECB','NEWT','NICK','NKSH','NMIH','NRIM','NSEC','NTRS','NWBI','NWFL','NYMT','OBAS',
+             'OCFC','OFED','OFS','OMF','ONB','OPHC','OPOF','ORRF','OSBC','OVBC','OVLY','OXBR','OXLC','PACW','PBCT','PBHC','PBIP','PBSK','PEBK','PEBO','PFBC','PFBX','PFIS','PFLT','PKBK','PLBC','PMBC',
+             'PNBK','PNFP','PNNT','PPBI','PRAA','PROV','PSBQ','PSEC','PWOD','QCCO','QCRH','RAND','RBCAA','REIS','RNST','ROIC','RPRX','RVSB','SAFT','SAL','SAMG','SASR','SBAC','SBCF','SBFG','SBNY',
+             'SBRA','SBSI','SCYT','SEIC','SFBC','SFBS','SFNC','SFST','SHBI','SIEB','SIFI','SIGI','SIVB','SLM','SLRC','SMBC','SMMF','SNFCA','SOHO','SRCE','SSB','SSBI','STBA','STBZ','STFC','STLY',
+             'STRS','SUNS','SVBI','SVVC','SYBT','TBBK','TBK','TBNK','TCBI','TCBK','TCFC','TCPC','THFF','TIGR','TOWN','TREE','TRMK','TROW','TRST','TSBK','TSC','UBCP','UBFO','UBOH','UBSI','UCBA','UCBI',
+             'UFCS','UIHC','UMBF','UMPQ','UNAM','UNB','UNTY','UVSP','VALU','VBFC','VBTX','VLY','VRTB','VRTS','VTR','WABC','WAFD','WASH','WAYN','WETF','WHF','WHLR','WRLD','WSBC','WSBF','WSFS','WTBA',
+             'WTFC','WVFC','Z','ZION' ]
+  Industrial-Products: [ 'ADES','AIMC','APDN','APOG','APWC','ASTE','BWEN','CECE','CLIR','CLWT','CMCO','CTAS','CTIB','CVV','CWST','DGLY','DMRC','DXPE','EML','ERII','FELE','FFHL','FTEK','GENC','GK',
+                         'GTLS','HDNG','HDSN','HEES','HURC','IIIN','IMIAY','IPWR','ITRN','KTEC','LAKE','LAYN','LECO','MIDD','MNTX','NDSN','NSSC','PLUG','POWL','PPSI','RITT','ROLL','SCSC','SCTY',
+                         'SLGN','SMED','SMIT','SPCB','STRL','TAYD','TSSI','TTEK','TWIN','UEPS','UFPT','VSEC','VTNR','WATT','WIRE','WLDN','XONE','ZBRA' ]
+  Medical: [ 'AAVL','ABCO','ABIO','ABMD','ACAD','ACET','ACHC','ACHN','ACOR','ACRX','ACST','ACUR','ADMA','ADMP','ADMS','ADUS','ADXS','AERI','AEZS','AFAM','AFMD','AGEN','AGIO','AGRX','AGTC','AHPI',
+             'AKBA','ALDX','ALGN','ALIM','ALKS','ALNY','AMED','AMGN','AMPH','AMRN','ANGO','ANIK','ANIP','ANTH','APTO','ARAY','ARDX','ARNA','ASMB','ATAI','ATEC','ATHX','ATNM','ATOS','ATRA','ATRC',
+             'ATRS','AUPH','AVEO','AXDX','AXGN','BCLI','BCRX','BDMS','BDSI','BEAT','BGMD','BIIB','BIND','BIOC','BLCM','BLFS','BLRX','BLUE','BMRN','BSPM','BSTG','CALA','CARA','CASI','CBAY','CCXI',
+             'CDNA','CDXS','CEMI','CERE','CERN','CERS','CFRX','CGEN','CHRS','CLDX','CLRB','CLSN','CLVS','CMRX','CNCE','CNMD','CORI','CORT','CPIX','CPRX','CPSI','CRIS','CRVS','CSBR','CSII','CTIC',
+             'CTSO','CYAN','CYCC','CYH','CYTK','CYTR','DBVT','DCTH','DERM','DRNA','DRRX','DVAX','DVCR','DXCM','DYNT','ECYT','EDAP','EGRX','ENDP','ENSG','ENTA','ENVI','ENZN','EPZM','ESMC','ESPR',
+             'ESRX','EVOK','EXAC','EXAS','EXEL','EYES','FATE','FGEN','FLDM','FLXN','FMI','FOLD','FONR','FWP','GALT','GBIM','GENE','GERN','GILD','GLMD','GLYC','GNCA','GNOW','GRFS','HALO','HART',
+             'HMNY','HOLX','HQY','HRTX','HSIC','HSKA','HTBX','IART','ICCC','ICPT','ICUI','IDRA','IDXX','ILMN','IMGN','INCR','INCY','INFI','INGN','INO','IPXL','IRMD','IRWD','ISRG','JUNO','JYNT',
+             'KANG','KERX','KMDA','KPTI','KTWO','LFVN','LGND','LJPC','LMAT','LNDC','LPCN','LPNT','LXRX','MACK','MASI','MDRX','MDWD','MDXG','MEIP','MGLN','MGNX','MLAB','MMSI','MNKD','MNOV','MRNS',
+             'MRTX','MTBC','MTEX','MYGN','MZOR','NAII','NATR','NBIX','NEO','NEOG','NEPT','NERV','NKTR','NSTG','NURO','NUVA','NVAX','NVCN','NWBO','NYMX','OCUL','OFIX','OMCL','OMER','ONCY','ONTX',
+             'ORMP','OSUR','OTIC','PACB','PAHC','PCRX','PDCO','PINC','PMD','PODD','PRPH','PRQR','PRTA','PRTK','PSTI','PTCT','QDEL','QTNT','QURE','RARE','RDHL','RDNT','RDUS','REGN','REPH','RGEN',
+             'RGLS','RIGL','RMTI','RVNC','RWLK','RXDX','SAGE','SCMP','SCYX','SGEN','SHPG','SIEN','SMLR','SPHS','SPPI','SPRO','SRDX','SRNE','SRPT','STAA','STRM','STXS','SUPN','SVA','TBPH','TENX',
+             'TGTX','THRX','TLOG','TNDM','TNXP','TRIB','TRIL','TRVN','TTOO','UHS','UTHR','UTMD','VBIV','VBLT','VCEL','VCYT','VIVO','VNDA','VRTX','VSTM','XENE','XENT','XLRN','XNCR','XOMA','XTLB',
+             'ZGNX','ZIOP' ]
+  Oils-Energy: [ 'AHGP','AMCF','AMTX','ARLP','ARRY','ASTI','ATHN','AXAS','BKEP','CCLP','CLMT','CSIQ','DMLP','DWSN','ENPH','FANG','FCEL','FNRG','FSLR','GEVO','GIFI','GLRI','GPOR','HES','HNRG','HQCL',
+                 'LGCY','LIME','LTBR','MARPS','MEIL','MTRX','OIS','OKE','OPTT','ORIG','PDCE','PFIE','PNRG','RCON','REGI','RGCO','ROYL','SKPI','SPWR','TGA','USEG','VNOM','ZAZA' ]
+
+  Retail-Wholesale: [ 'AMZN','ARKR','BBBY','BBRG','BEBE','BECN','BGFV','BJRI','BLDR','BLMN','CACH','CAKE','CALI','CASY','CBRL','CHUY','CONN','COST','CRMT','CTRN','DENN','DLTR','DXLG','EBAY','EXPE',
+                      'FARM','FAST','FINL','FIVE','FOSL','FRGI','GMAN','GPS','GRPN','GTIM','HBP','HIBB','IMKTA','JACK','JD','JMBA','KGJI','KIRK','LOCO','MELI','NATH','NDLS','NETE','NSIT','ODP','ORLY',
+                      'OSTK','PBPB','PETS','PLAY','PLCE','PSMT','PZZA','QKLS','RAVE','RENT','RGS','RMCF','ROST','RRGB','RUSHA','RUTH','SBUX','SCVL','SFM','SHLD','SONC','SPTN','SPWH','TAIT','TAST',
+                      'TGLS','TITN','TRIP','TSCO','TXRH','TZOO','URBN','VLGEA','VRA','WBA','WEN','WINA','WOOF','WSTG','ZOES','ZUMZ' ]
+  Transportation: [ 'AAL','AAWW','AIRT','ALGT','ARCB','ARII','ATSG','CHRW','CPLP','ECHO','EGLE','ESEA','EXPD','FWRD','GASS','GLBS','GLNG','HA','HTLD','HUBG','JBHT','JBLU','LSTR','MMLP','MRTN','ODFL',
+                    'OMAB','OMEX','PANL','PATI','PME','PTSI','RAIL','RYAAY','SAIA','SAVE','SBLK','SHIP','SKYW','TNP','TOPS','ULTR','USAK','WERN','WLFC' ]
+  Utilities: [ 'ARTNA','CCOI','CLNE','CNSL','CWCO','GOGO','HCOM','LILA','MGEE','MSEX','MYRG','OTTR','PCYO','PRMW','SHEN','SKYS','SPOK','YORW' ]
+
+paths:
+  data: 'data/NASDAQ'
+  tweet_retrieved: 'tweet/raw'
+  tweet_preprocessed: 'tweet/3_preprocessed_ACL18'
+  price: 'price/3_preprocessed_ACL18'
+  res: 'res/'
+  glove: 'glove.twitter.27B.50d.txt'
+  vocab_tweet: 'vocab.txt'
+  graphs: 'graphs'
+  checkpoints: 'checkpoints'
+  log: 'log/'

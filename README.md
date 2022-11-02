@@ -13,6 +13,8 @@ Should you have any query please contact me at [yumo.xu@ed.ac.uk](mailto:yumo.xu
 - Scipy 1.0.0
 - NLTK 3.2.5
 
+conda install cudatoolkit=8.0 cudnn -c free
+
 ## Directories
 - src: source files;
 - res: resource files including,

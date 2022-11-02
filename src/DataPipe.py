@@ -36,7 +36,7 @@ class DataPipe:
         self.word_embed_type = config_model['word_embed_type']
         self.word_embed_size = config_model['word_embed_size']
         self.stock_embed_size = config_model['stock_embed_size']
-        self.init_stock_with_word= config_model['init_stock_with_word']
+        self.init_stock_with_word = config_model['init_stock_with_word']
         self.price_embed_size = config_model['word_embed_size']
         self.y_size = config_model['y_size']
 
@@ -151,7 +151,7 @@ class DataPipe:
             return _get_mv_class(data)
 
         ts, ys, prices, mv_percents, main_mv_percent = list(), list(), list(), list(), 0.0
-        d_t_min = main_target_date - timedelta(days=self.max_n_days-1)
+        d_t_min = main_target_date - timedelta(days=self.max_n_days - 1)
 
         stock_movement_path = os.path.join(str(self.movement_path), '{}.txt'.format(ss))
         with io.open(stock_movement_path, 'r', encoding='utf8') as movement_f:
@@ -391,7 +391,7 @@ class DataPipe:
 
             sample_id = 0
             while sample_id < batch_size:
-                gen_id = random.randint(0, len(generators)-1)
+                gen_id = random.randint(0, len(generators) - 1)
                 try:
                     sample_dict = next(generators[gen_id])
                     T = sample_dict['T']
@@ -435,6 +435,36 @@ class DataPipe:
             }
 
             yield batch_dict
+
+    def batch_gen_pre(self, phase):
+        data = np.load('train_all.npz')
+        length = len(data['batch_size'])
+
+        index_list = np.random.randint(low=0, high=length, size=100, dtype=int)
+
+        idx = 0
+        while idx < len(index_list):
+            index = index_list[idx]
+            batch_dict = {
+                # meta
+                'batch_size': data['batch_size'][index],
+                'stock_batch': data['stock_batch'][index],
+                'T_batch': data['T_batch'][index],
+                # target
+                'y_batch': data['y_batch'][index],
+                'main_mv_percent_batch': data['main_mv_percent_batch'][index],
+                'mv_percent_batch': data['mv_percent_batch'][index],
+                # source
+                'price_batch': data['price_batch'][index],
+                'word_batch': data['word_batch'][index],
+                'ss_index_batch': data['ss_index_batch'][index],
+                'n_msgs_batch': data['n_msgs_batch'][index],
+                'n_words_batch': data['n_words_batch'][index]
+            }
+            idx += 1
+
+            yield batch_dict
+        raise StopIteration
 
     def batch_gen_by_stocks(self, phase):
         batch_size = 2000
@@ -549,3 +579,53 @@ class DataPipe:
 
             logger.info('ASSEMBLE: word table #replacement: {}'.format(n_replacement))
         return word_table_init
+
+
+if __name__ == '__main__':
+    pipe = DataPipe()
+    train_batch_gen = pipe.batch_gen(phase='train')
+    # dev_batch_gen = pipe.batch_gen_by_stocks(phase='test')
+
+    batch_size = []
+    stock_batch = []
+    T_batch = []
+    y_batch = []
+    main_mv_percent_batch = []
+    mv_percent_batch = []
+    price_batch = []
+    word_batch = []
+    ss_index_batch = []
+    n_msgs_batch = []
+    n_words_batch = []
+
+    total = 0
+
+    for batch_dict in train_batch_gen:
+        batch_size.append(batch_dict['batch_size'])
+        stock_batch.append(batch_dict['stock_batch'])
+        T_batch.append(batch_dict['T_batch'])
+        y_batch.append(batch_dict['y_batch'])
+        main_mv_percent_batch.append(batch_dict['main_mv_percent_batch'])
+        mv_percent_batch.append(batch_dict['mv_percent_batch'])
+        price_batch.append(batch_dict['price_batch'])
+        word_batch.append(batch_dict['word_batch'])
+        ss_index_batch.append(batch_dict['ss_index_batch'])
+        n_msgs_batch.append(batch_dict['n_msgs_batch'])
+        n_words_batch.append(batch_dict['n_words_batch'])
+
+        total += 1
+        print(total, batch_dict['batch_size'])
+
+        if total % 1000 == 0:
+            np.savez_compressed('train_all.npz',
+                                batch_size=np.stack(batch_size),
+                                stock_batch=np.stack(stock_batch),
+                                T_batch=np.stack(T_batch),
+                                y_batch=np.stack(y_batch),
+                                main_mv_percent_batch=np.stack(main_mv_percent_batch),
+                                mv_percent_batch=np.stack(mv_percent_batch),
+                                price_batch=np.stack(price_batch),
+                                word_batch=np.stack(word_batch),
+                                ss_index_batch=np.stack(ss_index_batch),
+                                n_msgs_batch=np.stack(n_msgs_batch),
+                                n_words_batch=np.stack(n_words_batch))

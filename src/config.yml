@@ -70,10 +70,10 @@ stocks:
   tech: ['GOOG', 'MSFT', 'FB', 'T', 'CHL', 'ORCL', 'TSM', 'VZ', 'INTC', 'CSCO']
 
 paths:
-  data: 'data/'
-  tweet_retrieved: 'tweet/raw'
-  tweet_preprocessed: 'tweet/preprocessed'
-  price: 'price/preprocessed'
+  data: 'data/ACL18'
+  tweet_retrieved: 'tweet/1_raw'
+  tweet_preprocessed: 'tweet/3_preprocessed_ACL18'
+  price: 'price/3_preprocessed_ACL18'
   res: 'res/'
   glove: 'glove.twitter.27B.50d.txt'
   vocab_tweet: 'vocab.txt'
